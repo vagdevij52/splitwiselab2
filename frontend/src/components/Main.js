@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {Route, Switch} from 'react-router-dom';
-import CreateANewGroup from './CreateANewGroup/CreateANewGroup';
-import Dashboard from './Dashboard/Dashboard';
-import Group from './Group/Group';
-import Login from './Login/Login';
-import Signup from './Signup/Signup';
-import MyGroups from './MyGroups/MyGroups';
-import Profile from './Profile/Profile';
-import RecentActivity from './RecentActivity/RecentActivity';
-import AuthService from './Services/AuthService';
+import LandingPage from '../pages/LandingPage/LandingPage';
+import CreateANewGroupPage from '../pages/CreateANewGroupPage/CreateANewGroupPage';
+import DashboardPage from '../pages/DashboardPage/DashboardPage';
+import GroupPage from '../pages/GroupPage/GroupPage';
+import LoginPage from '../pages/LoginPage/LoginPage';
+import SignupPage from '../pages/SignupPage/SignupPage';
+import MyGroupsPage from '../pages/MyGroupsPage/MyGroupsPage';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
+import RecentActivityPage from '../pages/RecentActivityPage/RecentActivityPage';
+import NavbarBeforeLogin from '../pages/LandingPage/NavbarBeforeLogin';
+//import AuthService from './Services/AuthService';
 
 
 //Create a Main Component
@@ -18,14 +20,16 @@ class Main extends Component {
         return(
             <div>
                 {/*Render Different Component based on Route*/}
-                <Route path="/createnewgroup" component={CreateANewGroup}/>
-                <Route path="/dashboard" component={Dashboard} />
-                <Route path="/group" component={Group}/>
-                <Route path="/signup" component={Signup}/>
-                <Route path="/login" component={Login}/>
-                <Route path="/mygroups" component={MyGroups}/>
-                <Route path="/profile" component={Profile}/>
-                <Route path="/recentactivity" component={RecentActivity}/>               
+                <Route path="/landing" component={LandingPage}/>
+                <Route path="/createnewgroup" component={CreateANewGroupPage}/>
+                <Route path="/dashboard" component={DashboardPage} />
+                <Route path="/group" component={GroupPage}/>
+                <Route path="/signup" component={SignupPage}/>
+                <Route path="/login" component={LoginPage}/>
+                <Route path="/mygroups" component={MyGroupsPage}/>
+                <Route path="/profile" component={ProfilePage}/>
+                <Route path="/recentactivity" component={RecentActivityPage}/>
+                <Route path="/navbarbeforelogin" component={NavbarBeforeLogin}/>               
             </div>
         )
     }
