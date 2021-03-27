@@ -9,7 +9,7 @@ import SignupPage from '../pages/SignupPage/SignupPage';
 import MyGroupsPage from '../pages/MyGroupsPage/MyGroupsPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import RecentActivityPage from '../pages/RecentActivityPage/RecentActivityPage';
-import NavbarBeforeLogin from '../pages/LandingPage/NavbarBeforeLogin';
+import NavbarBeforeLogin from '../pages/Navbar/NavbarBeforeLogin';
 //import AuthService from './Services/AuthService';
 
 

@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import '../../styles/signup.css';
 import mainlogo from '../../assets/logo.png';
 import { FormControl,Modal,Container,Row,Col,Image,Button, Form, FormLabel} from 'react-bootstrap';
-import NavbarBeforeLogin from '../LandingPage/NavbarBeforeLogin';
+import NavbarBeforeLogin from '../Navbar/NavbarBeforeLogin';
 import RegistrationService from '../../components/services/RegistrationService';
 
 const SignupPage = () => {
@@ -15,14 +15,15 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const[emailAlrdyErr, setEmailAlrdyErr] = useState("");
   const handleSignUp = (e) =>{
-    RegistrationService(username,email,password).
-    then((res)=>{
-      if(res===200){
-        return <Redirect to='/dashboard' />
-      }
-    }).catch(err=>{
-      console.log(err);
-    });
+    return <Redirect to='/dashboard' />
+    // RegistrationService(username,email,password).
+    // then((res)=>{
+    //   if(res===200){
+    //     return <Redirect to='/dashboard' />
+    //   }
+    // }).catch(err=>{
+    //   console.log(err);
+    // });
   }
     return(
       <>

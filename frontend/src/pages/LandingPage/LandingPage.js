@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Nav, Navbar, Button,Image} from 'react-bootstrap';
 import '../../styles/landing.css';
 import backgroundimg from '../../assets/bgimg100.jpeg';
-import NavbarBeforeLogin from './NavbarBeforeLogin';
+import NavbarBeforeLogin from '../Navbar/NavbarBeforeLogin';
 
  const landing = () => {
     return(

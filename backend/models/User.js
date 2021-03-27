@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Create schema
 const UserSchema = new Schema({
-    name:{
+    username:{
         type: String,
         required: true
     },
@@ -15,13 +15,29 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
+    phone:{
+        type: String,
+        required: true
+    },
+    defaultCurrency:{
+        type: double,
+        required: true
+    },
+    userTimeZone:{
+        type: Date,
+        required: true
+    },
+    userlanguage:{
+        type: String,
+        required: true
+    },
     avatar:{
         type: String
     },
-    date:{
+    createdDate:{
         type: Date,
         default: Date.now
-    }
-});
+    },
+  },{timestamps: true});
 
 module.exports = User = mongoose.model('users', UserSchema);
