@@ -24,7 +24,7 @@ const LeftSideBar = () => {
             </Row><br/>
             <Row>
                 <Link style={{textDecoration:"none",marginLeft:"5px",color:"#414a4c",fontWeight:"bold",fontSize:"13px"}} 
-                to="group">GROUPS
+                to="mygroups">GROUPS
                 </Link>
             </Row>
             {/* <Row>

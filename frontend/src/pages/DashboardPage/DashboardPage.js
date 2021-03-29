@@ -16,6 +16,7 @@ const DashboardPage = () => {
     return(
     <>
         <NavbarAfterLogin/>
+        <br/><br/>
         <Row>
         <Col></Col>
         <Col></Col>
