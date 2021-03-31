@@ -2,14 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const numeral = require('numeral');
 
 
 
 const users = require('./routes/api/users');
-const profiles = require('./routes/api/profiles');
-const posts = require('./routes/api/posts');
-
+//const profiles = require('./routes/profiles');
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -34,8 +31,8 @@ require('./config/passport')(passport);
 //Use routes
 
 app.use('/api/users', users);
-app.use('/api/profile', profiles);
-app.use('/api/posts', posts);
+//app.use('/api/profile', profiles);
+//app.use('/api/posts', posts);
 
 
 

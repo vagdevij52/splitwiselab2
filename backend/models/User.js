@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     },
     email:{
         type: String,
-        required: true 
+        required: true,
+        unique: true 
     },
     password:{
         type: String,
@@ -17,27 +18,19 @@ const UserSchema = new Schema({
     },
     phone:{
         type: String,
-        required: true
     },
     defaultCurrency:{
-        type: double,
-        required: true
+        type: String,
     },
     userTimeZone:{
         type: Date,
-        required: true
     },
     userlanguage:{
         type: String,
-        required: true
     },
     avatar:{
         type: String
     },
-    createdDate:{
-        type: Date,
-        default: Date.now
-    },
-  },{timestamps: true});
+  },{timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }});
 
 module.exports = User = mongoose.model('users', UserSchema);
