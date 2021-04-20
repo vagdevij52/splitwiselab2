@@ -1,21 +1,35 @@
 import React from 'react';
-import { useState, useRef, useContext} from "react";
+import axios from 'axios';
+import { useState, useRef, useContext,useEffect} from "react";
 import {Redirect} from 'react-router-dom';
 import ReactDOM from 'react-dom';
+import {connect} from 'react-redux';
+import logged from '../../actions/loginActions';
 import { FormControl,Modal,Container,Row,Col,Image,Button, Form, FormLabel} from 'react-bootstrap';
 import NavbarAfterLogin from '../Navbar/NavbarAfterLogin';
 import LeftSideBar from '../LeftSideBar/LeftSideBar';
 import {Link} from 'react-router-dom';
 import '../../styles/dashboard.css';
+import { storeRegUserData, getRegUserData, userSelector } from '../../slices/registereduserSlice';
+import {  useSelector,useDispatch } from 'react-redux';
+
 
 const DashboardPage = () => {
-
+    const storeusername = useSelector((state) => state.loggedReducer.username);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        var user = JSON.parse(localStorage.getItem("user"));
+        var username = user.username;
+        dispatch(logged(username));
+	}, []);
+    //console.log("Username: "+username);
     const handleSettleUp = () => {
         console.log("Settle up called!");
     }
     return(
     <>
         <NavbarAfterLogin/>
+        <h1 style={{color:"#5bc5a7",marginLeft:"5px"}}>Hey {storeusername}</h1>
         <br/><br/>
         <Row>
         <Col></Col>
@@ -61,4 +75,6 @@ const DashboardPage = () => {
     </>
     );
 }
-export default DashboardPage;
+
+
+  export default DashboardPage;

@@ -8,6 +8,8 @@ import { FormControl,Modal,Container,Row,Col,Image,Button, Form, FormLabel} from
 import NavbarAfterLogin from '../Navbar/NavbarAfterLogin';
 import '../../styles/createNewGroup.css';
 import {Link} from 'react-router-dom';
+import {  useSelector,useDispatch } from 'react-redux';
+
 
 const CreateANewGroupPage = () => {
     //const groupAdmin = user.email;
@@ -22,6 +24,8 @@ const CreateANewGroupPage = () => {
     const[newGrpCreatedMsg,setNewGrpCreatedMsg] = useState("");
 
     const [fields, setFields] = useState([{ value: null }]);
+
+    const avatar = useSelector((state) => state.profileReducer.avatar);
 
     const handleCreateGroup = (e) =>{
     }

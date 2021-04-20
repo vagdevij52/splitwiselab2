@@ -1,5 +1,9 @@
 import React from 'react';
+import axios from 'axios';
+import {useHistory} from 'react-router-dom';
 import { useState, useRef, useContext} from "react";
+import {useSelector, useDispatch} from 'react-redux';
+import logged from '../../actions/loginActions';
 import {Redirect} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import '../../styles/login.css';
@@ -7,24 +11,40 @@ import mainlogo from '../../assets/logo.png';
 import { FormControl,Modal,Container,Row,Col,Image,Button, Form, FormLabel} from 'react-bootstrap';
 import NavbarBeforeLogin from '../Navbar/NavbarBeforeLogin';
 import RegistrationService from '../../components/services/RegistrationService';
+import API_URL from '../../constants/Constants';
 
 const LoginPage = () => {
 
+  const history = useHistory();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const[emailAlrdyErr, setEmailAlrdyErr] = useState("");
-  const handleLogIn = (e) =>{
-    // RegistrationService(username,email,password).
-    // then((res)=>{
-    //   if(res===200){
-    //     return <Redirect to='/dashboard' />
-    //   }
-    // }).catch(err=>{
-    //   console.log(err);
-    // });
-    return <Redirect to='/dashboard' />
+  const[inValidLoginUser, setInValidLoginUser] = useState("");
+  const isLogged = useSelector((state) => state.loggedReducer.username);
+  const dispatch = useDispatch();
+
+  const loadSuccess = () =>{
+    history.push('/dashboard');
   }
+  const handleLogin = (e) => {
+    e.preventDefault();
+    axios
+    .post("http://localhost:4000/api/users/login", {
+      email,
+      password,
+    })
+    .then((response) => {
+      if (response.status !== 400) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+        console.log("Before action dispatch");
+        loadSuccess();
+        console.log("After action dispatch");
+        dispatch(logged(response.data.username,response.data.email));
+      }
+    }).catch(err=>{
+       setInValidLoginUser("Email or password is invalid");
+        });
+   }
     return(
       <>
       <NavbarBeforeLogin />
@@ -37,7 +57,7 @@ const LoginPage = () => {
           </Col>
           <Col>
           <Row className="titleLoginPage">WELCOME TO SPLITWISE</Row>
-          <Form onSubmit={handleLogIn}>
+          <Form onSubmit={handleLogin}>
             <Row><label style={{fontSize:"18px",color:"#353839"}}>Email address</label></Row>
             <Row>
               <input
@@ -49,7 +69,7 @@ const LoginPage = () => {
               className="iemail"
               />
             </Row>
-            <div style={{color:"red", fontWeight:"bold"}}>{emailAlrdyErr}</div>
+            <div style={{color:"red", fontWeight:"bold"}}>{inValidLoginUser}</div>
             <br/>
             <Row><FormLabel style={{fontSize:"18px",color:"#353839"}}>Password</FormLabel></Row>
             <Row>

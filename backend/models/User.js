@@ -16,21 +16,9 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    phone:{
-        type: String,
-    },
-    defaultCurrency:{
-        type: String,
-    },
-    userTimeZone:{
-        type: Date,
-    },
-    userlanguage:{
-        type: String,
-    },
-    avatar:{
-        type: String
-    },
+    // avatar:{
+    //     type: String
+    // },
   },{timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }});
 
 module.exports = User = mongoose.model('users', UserSchema);

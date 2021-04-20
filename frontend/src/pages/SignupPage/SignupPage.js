@@ -19,44 +19,30 @@ const SignupPage = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const[emailAlrdyErr, setEmailAlrdyErr] = useState("");
-  const handleSignUp = (e) =>{
-    //return <Redirect to='/dashboard' />
-    // console.log("Calling Regsitration service");
-    // RegistrationService(username,email,password)
-    // .then((res)=>{
-    //   if(res){
-    //     return <Redirect to='/dashboard' />
-    //   }
-    // }).catch(err=>{
-    //   console.log(err);
-    // });
+  const handleSignUp = async(e) =>{
     e.preventDefault();
-    axios.post("http://localhost:4000/api/users/signup", {
+    try{
+    const response = await axios.post("http://localhost:4000/api/users/signup", {
       username,
       email,
       password,
     })
-    .then(response => {
       console.log("Res: "+response);
-      if(response){
+      if(response.status === 200){
       console.log("Response from axios: "+JSON.stringify(response.data));
       var strRes = JSON.stringify(response.data);
       var data = JSON.parse(strRes);
       console.log(data.username);
-      // var rusername = data.map(u => u.username);
-      // var remail = data.map(u => u.email);
-      console.log("calling user slice");
-      dispatch(storeRegUserData(data.username,data.email));
+      localStorage.setItem("user", JSON.stringify(response.data));
+      //console.log("calling user slice");
+      //dispatch(storeRegUserData(data.username,data.email));
       props.history.push("/dashboard");
       }
-    }).catch(err=>{
+    }catch(err){
       console.log("Error: "+err);
-    });
-    // console.log("calling user slice");
-    // dispatch(storeRegUserData(username,email,password));
+      setEmailAlrdyErr("Email already exists!");
+    }
   }
-
-
     return(
       <>
       <NavbarBeforeLogin />
@@ -95,7 +81,7 @@ const SignupPage = (props) => {
               className="iemail"
               />
             </Row>
-            <div style={{color:"red", fontWeight:"bold"}}>{emailAlrdyErr}</div>
+            <div style={{color:"red", fontWeight:"bold", fontSize:"15px"}}>{emailAlrdyErr}</div>
             <br/>
             <Row><FormLabel style={{fontSize:"18px",color:"#353839"}}>And here’s my <strong>password</strong></FormLabel></Row>
             <Row>
@@ -124,4 +110,3 @@ const SignupPage = (props) => {
 }
 
 export default SignupPage;
-

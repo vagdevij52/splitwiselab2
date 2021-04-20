@@ -36,9 +36,17 @@ router.post('/signup', (req, res) => {
                         if(err) throw err;
                         newUser.password = hash;
                         console.log("New user: "+newUser);
-                        newUser.save()
-                            .then(user => res.json(user))
-                            .catch(err => console.log(err))
+                        var token = jwt.sign({ id: newUser.id }, keys.secretOrKey, {
+                            expiresIn: 86400 // 24 hours
+                          });
+                        newUser.save(err => {
+                            if (err) {
+                              res.status(500).send({ message: err });
+                              return;
+                            }
+                  
+                            res.json({ userId: newUser._id, username: newUser.username, email: newUser.email, token:'Bearer '+ token });
+                          });
                     })
                 })
             }
@@ -49,6 +57,7 @@ router.post('/signup', (req, res) => {
 
 
 router.post('/login', (req, res) => {
+    console.log("Backend -- In Login API");
     const email = req.body.email;
     const password = req.body.password;
 
@@ -67,9 +76,8 @@ router.post('/login', (req, res) => {
         bcrypt.compare(password, user.password).then(isMatch => {
             if(isMatch){
                 const payload = {
-                    name: user.name,
+                    username: user.username,
                     email: user.email,
-                    avatar: user.avatar,
                     id: user.id
                 }
                 //res.json({ msg: 'Success'})
@@ -80,7 +88,10 @@ router.post('/login', (req, res) => {
                     (err, token) => {
                         res.json({
                             success: true,
-                            token: 'Bearer '+ token
+                            username: user.username,
+                            id: user.id,
+                            email: user.email,                            
+                            token: 'Bearer '+ token,
                         })
                     });
             }else{
@@ -92,8 +103,11 @@ router.post('/login', (req, res) => {
 });
 
 
-
+// @route   GET api/users/current
+// @desc    Return Current User
+// @access  Private
 router.get('/current', passport.authenticate('jwt', { session: false}), (req, res) => {
+    console.log("Backend-Get Current User"+JSON.stringify(req.headers));
     res.json(req.user);
 });
 module.exports = router;

@@ -5,14 +5,14 @@ const passport = require('passport');
 
 
 const users = require('./routes/api/users');
-//const profiles = require('./routes/profiles');
+const profile = require('./routes/api/profile');
 const app = express();
 
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,Authorization');
     res.setHeader('Cache-Control', 'no-cache');
     next();
   });
@@ -38,7 +38,7 @@ require('./config/passport')(passport);
 //Use routes
 
 app.use('/api/users', users);
-//app.use('/api/profile', profiles);
+app.use('/api/profile', profile);
 //app.use('/api/posts', posts);
 
 

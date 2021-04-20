@@ -5,14 +5,20 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import {configureStore} from '@reduxjs/toolkit';
+import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import rootReducer from './slices';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import allReducers from './reducers';
 
 
-const store = configureStore({reducer: rootReducer})
+//const store = configureStore({reducer: rootReducer})
+//const store = createStore(allReducers, window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose);
 
+const store = createStore(allReducers,
+       window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+       
 //render App component on the root element
 render(
     <Provider store={store}>
