@@ -6,6 +6,8 @@ const passport = require('passport');
 
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
+const group = require('./routes/api/group');
+
 const app = express();
 
 app.use(function(req, res, next) {
@@ -39,6 +41,8 @@ require('./config/passport')(passport);
 
 app.use('/api/users', users);
 app.use('/api/profile', profile);
+app.use('/api/group', group);
+
 //app.use('/api/posts', posts);
 
 

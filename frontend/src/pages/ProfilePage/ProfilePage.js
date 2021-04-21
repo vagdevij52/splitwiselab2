@@ -168,9 +168,6 @@ const ProfilePage = (props) =>{
             setAvatar(data.secure_url);
         });
     }
-    const loadSuccess = () =>{
-        history.push('/dashboard');
-      }
 
     const handleSaveProfile = (e) => {
         e.preventDefault();
