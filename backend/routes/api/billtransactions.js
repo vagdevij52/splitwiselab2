@@ -18,8 +18,8 @@ const Group = require('../../models/Group');
 //Load BillTransaction model
 const BillTransactions = require('../../models/BillTransactions');
 
-const {kafka} = require('../../../kafka-backend/kafka');
 const modules = require('./modules');
+const {kafka} = require('./kafka');
 
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
@@ -146,6 +146,53 @@ router.post('/getExpenseComment', passport.authenticate('jwt', { session: false 
 });
 
 
+let callAndWait = () => {
+
+    console.log('Kafka client has not connected yet, message will be lost');
+
+};
+
+
+
+(async () => {
+
+    if (process.env.MOCK_KAFKA === 'false') {
+
+        const k = await kafka();
+
+        callAndWait = k.callAndWait;
+
+    } else {
+
+        callAndWait = async (fn, ...params) => modules[fn](...params);
+
+        console.log('Connected to dev kafka');
+
+    }
+
+})();
+
+
+
+router.post('/addCommentByKafka', passport.authenticate('jwt', {session: false}), async(req,res) => {
+
+    //BillTransactions.find({expenseName: req.body.expenseName}).then(billtransactions => {
+        console.log(req.body.expenseDesc);
+        console.log("Are you coming here?????")
+
+        const billtransactions = await callAndWait('addComment', req.user,req.body.text,req.body.expenseDesc);
+
+        res.json(billtransactions);
+
+
+
+        
+
+})
+
+
+
+
 // @route   POST api/leaveGroup
 // @desc    Leave a Group
 // @access  Private
@@ -153,12 +200,19 @@ router.post('/leaveGroup', passport.authenticate('jwt', { session: false }), (re
     console.log("Backend -- In Leave a Group - POST- API");
     console.log("Grp name: "+req.body.groupName);
     console.log("req.user.id: "+req.user.id);                                            
-    BillTransactions.find({groupName:req.body.groupName}).then(billsCredit =>{
-        console.log(billsCredit)
-        if(billsCredit){
-            console.log("Bills Credit");
+    BillTransactions.find({groupName: req.body.groupName, 'members.member': req.user.id}).then(grp =>{
+        console.log(grp)
+        if(grp){
+            for(var i=0;i<grp.length;i++){
+                for(var j=0;j<grp[i].length;j++){
+                    if(grp[i].members[j].member===req.user.id){
+                        
+                 } 
+                }
+            }
+            console.log("grp: "+grp);
             //if(billsCredit.)
-            res.json(billsCredit);
+            res.json(grp);
             //res.json(expensecomment);
         }
     })

@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import React, {Component} from 'react';
 import mainlogo from '../../assets/logo.png';
 import '../../styles/dashboard.css';
-//import '../../styles/groups.css';
+import '../../styles/recentActivity.css';
 import {Redirect} from 'react-router';
 import { useState, useEffect ,setState} from 'react'
 import { FormControl,Modal,Row, Col,Image} from 'react-bootstrap';
@@ -17,6 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import NavbarAfterLogin from '../Navbar/NavbarAfterLogin';
 import activitylogo from '../../assets/activity.png';
 import TablePagination from '@material-ui/core/TablePagination';
+import ReactPaginate from 'react-paginate';
 
 const RecentActivityPage = () =>{
 
@@ -31,6 +32,7 @@ const RecentActivityPage = () =>{
 
     const [recentActivityParedObj, setRecentActivityParedObj] = useState([]);
 
+    
     useEffect(() =>{
     const loadRecentActivity = () =>{
         const requestOptions = {
@@ -51,6 +53,19 @@ const RecentActivityPage = () =>{
     }
     loadRecentActivity();
 },[]);
+
+    const[pageNumber, setPageNumber] = useState(0);
+    const activitiesPerPage = 10;
+    const pagesVisited = pageNumber*activitiesPerPage;
+    const[pagAct, setPagAct] = useState();
+    const pageCount = Math.ceil(recentActivityParedObj.length/activitiesPerPage);
+
+    const displayPaginatedActivities = () =>{
+        
+    }
+    const handleOnPageChange = ({selected}) =>{
+        setPageNumber(selected);
+    }
    
             const handleChangePage = (event, newPage) => {
             setPage(newPage);
@@ -76,7 +91,9 @@ const RecentActivityPage = () =>{
         </Grid>
     </Grid><br/>
     <Grid container spacing="2">
-    {recentActivityParedObj.map(activity => (
+    {recentActivityParedObj
+    .slice(pagesVisited,pagesVisited+activitiesPerPage)
+    .map(activity => (
         <Grid item>
             <Paper style={{ marginLeft:"20px" ,height:43 , width:1000, background:"#eee",fontSize:20}}>
             {/* <Link 
@@ -93,19 +110,30 @@ const RecentActivityPage = () =>{
             </Paper>
         </Grid>
     ))}
-
-    
+<br/><br/>
+    <ReactPaginate 
+    previousLabel={"Previous"}
+    nextLabel={"Next"}
+    pageCount={pageCount}
+    onPageChange={handleOnPageChange}
+    containerClassName={"paginationBttns"}
+    previousClassName={"previousBttn"}
+    nextClassName={"nextBttn"}
+    disabledClassName={"paginationDisabled"}
+    activeClassName={"paginationActive"}
+    />
     </Grid>
+    
     </Container>
 
-    <TablePagination
+    {/* <TablePagination
       component="div"
       count={100}
       page={page}
       onChangePage={handleChangePage}
       rowsPerPage={rowsPerPage}
       onChangeRowsPerPage={handleChangeRowsPerPage}
-    />
+    /> */}
     
     </body>
     );

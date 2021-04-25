@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import React, {Component} from 'react';
+import {useHistory} from 'react-router-dom';
 import addExpenseDesc from '../../assets/addExpenseDesc.png';
 import '../../styles/groups.css';
 import {Image} from 'react-bootstrap';
@@ -80,6 +81,7 @@ const useStyles = makeStyles({
 
 
  const  GroupPage = props =>{
+  const history = useHistory();
     const [expanded, setExpanded] = React.useState('panel1');
     const billArray = [];
     const handleChange = (panel) => (event, newExpanded) => {
@@ -151,28 +153,27 @@ const useStyles = makeStyles({
     
 
     const handleLeaveGroup = () =>{
-      const headers = {
-        headers: {
-          'Content-Type': 'application/json' ,
-          'Authorization': token
+      const requestOptions = {
+          method: 'GET',
+         headers: { 'Content-Type': 'application/json' ,'Authorization': token},
         }
-    }
-      const body = {
-          'groupName':groupName
-      }
-      axios.post("http://localhost:4000/api/billtransactions/leaveGroup",body,headers)
-            .then((response) =>{
-                console.log("Leave group: "+JSON.stringify(response.data));
-                if(response.status===200){
-                 var billList = JSON.stringify(response.data);
-                 setAddBillGrpParedObj(JSON.parse(billList));
-                // }else if(response.status===400){
-                //     setShowNoMyGrpMsg("You are not a part of any group!");
-                }
-            }).catch(err=>{
-                console.log(err);
-                //setShowNoMyGrpMsg("You are not a part of any group!");
-            });
+      axios.get("http://localhost:4000/api/billtransactions/youOwe",requestOptions)
+      .then((response) =>{
+         
+          if(response.status===200){
+            var x = Math.floor((response.data[0].sum) * 100) / 100;
+            x.toFixed(2);
+            console.log("You Owe: "+x);
+            if(x===0){
+              console.log("You can leave the group");
+              axios.post("http://localhost:4000/api/group/leaveGroup",requestOptions)
+              .then((response) =>{});
+              history.push("/dashboard");
+            }
+          }
+      }).catch(err=>{
+          console.log(err);
+      });
     }
     const handlePostCommentSubmit = (billDesc) =>{
     console.log("Bill desc: "+billDsc);
@@ -188,7 +189,7 @@ const useStyles = makeStyles({
         'text':postComment,
     }
     console.log("body: "+JSON.stringify(body)+"headers: "+JSON.stringify(headers));
-    axios.post("http://localhost:4000/api/billtransactions/addExpenseComment",body,headers)
+    axios.post("http://localhost:4000/api/billtransactions/addCommentByKafka",body,headers)
             .then((response) =>{
                 console.log("Added expense comment: "+JSON.stringify(response.data.expenseComment));
                 if(response.status===200){

@@ -14,7 +14,6 @@ const Profile = require('../../models/Profile');
 //Load Group model
 const Group = require('../../models/Group');
 
-const {kafka} = require('../../../kafka-backend/kafka');
 const modules = require('./modules');
 const paginateResults = require('../../utils/paginateResults');
 
@@ -192,20 +191,29 @@ router.post('/search', passport.authenticate('jwt', { session: false }), (req,re
     });
 });
 
-// using kafka for accept/reject group invites
-// let callAndWait = () => {
-//     console.log('Kafka client has not connected yet, message will be lost');
-// };
+// @route   POST api/leaveGroup
+// @desc    Leave a Group
+// @access  Private
+router.post('/leaveGroup', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In Leave a Group - POST- API");
+    console.log("Grp name: "+req.body.groupName);
+    console.log("req.user.id: "+req.user.id);                                            
+    // Group.findByIdAndRemove({groupName: req.body.groupName, 'members.member': req.user.id}).then(grp =>{
+    //     console.log(grp)
+    //     if(grp){
+    //         console.log("grp: "+grp);
+    //         res.json(grp);
+    //     }
+    // })
+    Group.findOne({groupName: req.body.groupName})
+    .then(group => {
+        if(group){
+            console.log("Grp alrdy exists");
+        }
+    console.log("Group: "+group);
+    });
+});
 
-// (async () => {
-//     if (process.env.MOCK_KAFKA === 'false') {
-//         const k = await kafka();
-//         callAndWait = k.callAndWait;
-//     } else {
-//         callAndWait = async (fn, ...params) => modules[fn](...params);
-//         console.log('Connected to dev kafka');
-//     }
-// })();
 
 router.post('/acceptInviteKafka', passport.authenticate('jwt', { session: false }), async(req, res) => {
     console.log("In group.js - /acceptInviteKafka")
