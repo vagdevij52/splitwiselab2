@@ -19,15 +19,25 @@ const BillTransactionsSchema = new Schema({
     },
     expenseDesc:{
         type: String,
-        // required: true,
+         required: true,
          unique: true
     },
     expenseComment:[{
-        member:{
+        author:{
             type: Schema.Types.ObjectId,
-            ref: 'users'
+            ref: 'user'
         },
-        comment: String
+        text:{
+        	type: String,
+        	required: true
+        },
+        name:{
+        	type: String,
+        },
+        date:{
+        	type: Date,
+        	default: Date.now
+        }
     }],
     expenseAmount:{
         type:Number

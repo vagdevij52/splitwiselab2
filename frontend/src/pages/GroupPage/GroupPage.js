@@ -33,6 +33,11 @@ import ExpenseComment from './ExpenseComment';
 import CustomizedListItem from './CustomizedListItem';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import CardHeader from '@material-ui/core/CardHeader';
+import InsertCommentIcon from '@material-ui/icons/InsertComment';
+import clsx from 'clsx';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import IconButton from '@material-ui/core/IconButton';
 
 
 const useStyles = makeStyles({
@@ -57,9 +62,19 @@ const useStyles = makeStyles({
         fontWeight:'bold'
       },
       
-    // pos: {
-    //   marginBottom: 12,
-    // },
+      cardroot: {
+        maxWidth: 500,
+      },
+      expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        // transition: theme.transitions.create('transform', {
+        //   duration: theme.transitions.duration.shortest,
+        // }),
+      },
+      expandOpen: {
+        transform: 'rotate(180deg)',
+      },
   });
 
 
@@ -81,6 +96,7 @@ const useStyles = makeStyles({
      console.log("Gname: "+groupName);
     const [show, setShow] = useState(false);
     const [showPostCommentModal, setShowPostCommentModal] = useState(false);
+    const[showComments,setShowComments] = useState(false);
     const[billDsc, setBillDsc] = useState("");
     const handleClose = () => setShow(false);
     const handlePostCommentModalClose = () => setShowPostCommentModal(false);
@@ -88,6 +104,30 @@ const useStyles = makeStyles({
     const handleShowPostComment = (billDesc) => {
     setShowPostCommentModal(true);
     setBillDsc(billDesc);
+    setShowComments(true);
+    const headers = {
+        headers: {
+          'Content-Type': 'application/json' ,
+          'Authorization': token
+        }
+    }
+      const body = {
+          'expenseDesc': billDesc,
+      }
+      console.log("body: "+JSON.stringify(body)+"headers: "+JSON.stringify(headers));
+      axios.post("http://localhost:4000/api/billtransactions/getExpenseComment",body,headers)
+              .then((response) =>{
+                  console.log("got expense comment as: "+JSON.stringify(response.data[0].expenseComment));
+                  if(response.status===200){
+                   var commentsList = JSON.stringify(response.data[0].expenseComment);
+                   setCommentsParedObj(JSON.parse(commentsList));
+                  // }else if(response.status===400){
+                  //     setShowNoMyGrpMsg("You are not a part of any group!");
+                  }
+              }).catch(err=>{
+                  console.log(err);
+                  //setShowNoMyGrpMsg("You are not a part of any group!");
+              });
     }
     const[expenseDesc,setExpenseDesc] = useState("");
     const[expenseAmount,setExpenseAmount] = useState("");
@@ -96,17 +136,19 @@ const useStyles = makeStyles({
     const[fields, setFields] = useState([]);
 
     const [addBillParedObj, setAddBillGrpParedObj] = useState([]);
+    const[commentsParedObj, setCommentsParedObj]= useState([]);
     const [getBillParedObj, setGetBillParedObj] = useState([]);
     const [open, setOpen] = React.useState(true);
     const[postComment, setPostComment] = useState("");
     const [openAccepted, setOpenAccepted] = React.useState(false);
     const [openRejected, setOpenRejected] = React.useState(false);
-
+    const[postCommSucc, setPostCommSucc] = React.useState(false);
     const[billAddedMsg,setBillAddedMsg] = useState("");
 
-    const handleExpandClick = (id) => {
-      setOpen(!open);
-    };
+    const [cardexpanded, setCardExpanded] = React.useState(false);
+    const [expandedId, setExpandedId] = React.useState(-1);
+
+    
 
     const handleLeaveGroup = () =>{
       const headers = {
@@ -143,15 +185,16 @@ const useStyles = makeStyles({
   }
     const body = {
         'expenseDesc': billDsc,
-        'postComment':postComment,
-        'groupName':groupName
+        'text':postComment,
     }
+    console.log("body: "+JSON.stringify(body)+"headers: "+JSON.stringify(headers));
     axios.post("http://localhost:4000/api/billtransactions/addExpenseComment",body,headers)
             .then((response) =>{
-                console.log("Added expense comment: "+JSON.stringify(response.data));
+                console.log("Added expense comment: "+JSON.stringify(response.data.expenseComment));
                 if(response.status===200){
-                 var billList = JSON.stringify(response.data);
-                 setAddBillGrpParedObj(JSON.parse(billList));
+                 var commentsList = JSON.stringify(response.data.expenseComment);
+                 setCommentsParedObj(JSON.parse(commentsList));
+                 setPostCommSucc(true)
                 // }else if(response.status===400){
                 //     setShowNoMyGrpMsg("You are not a part of any group!");
                 }
@@ -159,8 +202,17 @@ const useStyles = makeStyles({
                 console.log(err);
                 //setShowNoMyGrpMsg("You are not a part of any group!");
             });
+
+            
     
     }
+    const handleExpandClick = (billdesc) => {
+        console.log(billdesc);
+        setCardExpanded(!cardexpanded);
+        //setCardExpanded(!cardexpanded);
+        //setCommentsParedObj(commentsList);
+        setExpandedId(expandedId === billdesc ? -1 : billdesc);
+      };
 
     useEffect(() =>{
         const loadBills = () =>{
@@ -205,6 +257,13 @@ const useStyles = makeStyles({
         setOpenAccepted(false);
       };
 
+      const handlePostCommSucc = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }    
+        setPostCommSucc(false);
+      };
+
     const handleModalValues = (e) =>{
         e.preventDefault();
         setBillAddedMsg("");
@@ -237,7 +296,7 @@ const useStyles = makeStyles({
     }
 
          return(
-             <>
+            <>
 
             <NavbarAfterLogin /> 
             <Container>
@@ -245,6 +304,12 @@ const useStyles = makeStyles({
             <Snackbar open={openAccepted} autoHideDuration={6000} onClose={handleAcceptedClose}>
                     <Alert style={{fontSize:"20px"}} onClose={handleAcceptedClose} severity="success">
                         You have added an expense
+                    </Alert>
+            </Snackbar>
+
+            <Snackbar open={postCommSucc} autoHideDuration={6000} onClose={handlePostCommSucc}>
+                    <Alert style={{fontSize:"20px"}} onClose={handlePostCommSucc} severity="success">
+                        Posted comment
                     </Alert>
             </Snackbar>
         <Row>
@@ -269,10 +334,9 @@ const useStyles = makeStyles({
                     <Grid container spacing="2">
                     {addBillParedObj.map(bill => (
                     <Grid item>
-                    <Paper style={{ height:60 , width:800, background:"#eee",fontSize:20}}>
+                    <Paper style={{ height:75 , width:800, background:"#eee",fontSize:20}}>
                       <p>{bill.expenseDesc}</p>
-                      <Button onClick={()=>handleShowPostComment(bill.expenseDesc)}>Add Comment</Button>
-
+                      <Button style={{background:"#5bc5a7",fontSize:"14px",color:"#ffffff",fontWeight:"bold"}} onClick={()=>handleShowPostComment(bill.expenseDesc)}>Add Comment</Button>
                       <Modal style={{opacity:5}} show={showPostCommentModal} onHide={handlePostCommentModalClose} centered>
                 <Modal.Header style={{background:"#5bc5a7"}} closeButton>
                 <Modal.Title style={{fontWeight:"bold"}}>Add an expense</Modal.Title>
@@ -291,6 +355,12 @@ const useStyles = makeStyles({
                 placeholder="Post a comment"
                 /> <br/>                
                 </Form.Group>
+                {commentsParedObj.map(bill => (
+                    <div>
+                    <p><b>{bill.name}</b></p>
+                    <p> {bill.text}</p>
+                    </div>
+                    ))}
                 </Col>
                 </Row>
                 </Container>
@@ -316,13 +386,13 @@ const useStyles = makeStyles({
                 
             <Col>
                     <br/>
-                    <Card>
+                    {/* <Card>
                         <CardContent>
                         <Typography style={{fontSize:"15px"}} color="textSecondary" gutterBottom>
                         GROUP BALANCES
                         </Typography>  
                         </CardContent>
-                    </Card>
+                    </Card> */}
             </Col>
             </Row>
         </Container>
