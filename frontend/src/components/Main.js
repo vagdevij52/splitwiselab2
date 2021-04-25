@@ -4,9 +4,11 @@ import LandingPage from '../pages/LandingPage/LandingPage';
 import CreateANewGroupPage from '../pages/CreateANewGroupPage/CreateANewGroupPage';
 import DashboardPage from '../pages/DashboardPage/DashboardPage';
 import GroupPage from '../pages/GroupPage/GroupPage';
+import GroupCenterColumn from '../pages/GroupPage/GroupCenterColumn';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import SignupPage from '../pages/SignupPage/SignupPage';
 import MyGroupsPage from '../pages/MyGroupsPage/MyGroupsPage';
+import SearchResults from '../pages/MyGroupsPage/SearchResults';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import RecentActivityPage from '../pages/RecentActivityPage/RecentActivityPage';
 import NavbarBeforeLogin from '../pages/Navbar/NavbarBeforeLogin';
@@ -24,10 +26,12 @@ class Main extends Component {
                 <Route path="/createnewgroup" component={CreateANewGroupPage}/>
                 <Route path="/dashboard" component={DashboardPage} />
                 <Route path="/group" component={GroupPage}/>
+                <Route path="/groupcenter" component={GroupCenterColumn}/>
                 <Route path="/signup" component={SignupPage}/>
                 <Route path="/login" component={LoginPage}/>
                 <Route path="/mygroups" component={MyGroupsPage}/>
                 <Route path="/profile" component={ProfilePage}/>
+                <Route exact path="/search/:query"><SearchResults /></Route>
                 <Route path="/recentactivity" component={RecentActivityPage}/>
                 <Route path="/navbarbeforelogin" component={NavbarBeforeLogin}/>               
             </div>

@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
     "kafkajs": "^1.15.0"
   }
 }

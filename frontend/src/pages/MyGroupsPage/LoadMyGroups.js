@@ -20,12 +20,14 @@ const LoadMyGroups = () =>{
 
     //const user = AuthService.getCurrentUser();
     //const userEmail = user.email;
+    var userLocalStorage = JSON.parse(localStorage.getItem("user"));
+    const token = userLocalStorage.token;
+
     const inviteProcessed = 'Sent';
     const waitingInviteStatus = 'NoReply';
     const acceptGroupsInviteStatus = 'Accepted';
     const rejectGroupsInviteStatus = 'Rejected';
 
-    const API_URL = "http://localhost:3001/";
     const [paredObj, setParedObj] = useState([]);
     const [myGrpParedObj, setMyGrpParedObj] = useState([]);
     const[showMsg, setShowMsg] = useState("");
@@ -34,11 +36,11 @@ const LoadMyGroups = () =>{
 
     useEffect(() =>{
     const loadOnStartMyGroups = () =>{
-        axios.post(API_URL + 'loadOnStartMyGroups',{
-            //userEmail,
-            acceptGroupsInviteStatus,
-            inviteProcessed,
-        })
+        const requestOptions = {
+            method: 'GET',
+           headers: { 'Content-Type': 'application/json' ,'Authorization': token},
+          }
+        axios.get("http://localhost:4000/api/group/getMyGroups",requestOptions)
         .then((response) =>{
             console.log("My Groups: "+JSON.stringify(response.data));
             if(response.status===200){
@@ -96,11 +98,24 @@ const LoadMyGroups = () =>{
         </Grid>
     </Grid><br/>
     <Grid container spacing="2">
+    {myGrpParedObj.map(grp => (
         <Grid item>
             <Paper style={{ height:40 , width:900, background:"#eee",fontSize:30}}>
-            <Link style={{marginLeft:"7px",color:"#353839",fontSize:"23px"}}>Farewell party </Link>
+
+            <Link 
+            style={{marginLeft:"7px",color:"#353839",fontSize:"23px"}}
+            to={{
+                pathname: '/group',
+                state:`${grp.groupName}`
+            }}
+            >
+            {grp.groupName} </Link>
+            <p style={{fontSize:"20px",color:"red"}}>{showNoMyGrpMsg}</p>
             </Paper>
         </Grid>
+    ))}
+
+    
     </Grid>
     </Container>
     );

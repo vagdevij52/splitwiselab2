@@ -9,6 +9,7 @@ import LeftSideBar from '../LeftSideBar/LeftSideBar';
 import { useState, useEffect ,setState} from 'react'
 import { FormControl,Modal,Container,Row, Col,Image,Button} from 'react-bootstrap';
 import LoadMyGroups from '../MyGroupsPage/LoadMyGroups';
+import SearchBar from '../MyGroupsPage/SearchBar';
 import LoadOtherGroups from '../MyGroupsPage/LoadOtherGroups';
 //import SearchBar from '../SearchBar';
 import NavbarAfterLogin from '../Navbar/NavbarAfterLogin';
@@ -27,13 +28,14 @@ export const MyGroupsPage = () => {
         <Row>
             <Col></Col>
             <Col>
-            <TextField style={{width:"300px",fontSize:"50px"}}
+            {/* <TextField style={{width:"300px",fontSize:"50px"}}
                             id="searchInput"
                             placeholder="Search for your groups"   
                             margin="dense"
                             endIcon={<SearchIcon />}
                             // onChange={this.onSearchInputChange}
-                            />
+                            /> */}
+                            <SearchBar />
 
             </Col>
             <Col>

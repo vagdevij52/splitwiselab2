@@ -52,6 +52,7 @@ const CreateANewGroupPage = () => {
             params.append('emails', fields[i].value);
             console.log(params.get('emails'));
         }
+        params.append('emails',userLocalStorage.email);
         params.append('groupAvatar', groupAvatar);
         // fields.forEach( (el)=>{
         //     params.append('email',value);

@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+require('dotenv').config();
 
 const keys= require('../../config/keys');
 //Load user model
@@ -12,6 +13,10 @@ const User = require('../../models/User');
 const Profile = require('../../models/Profile');
 //Load Group model
 const Group = require('../../models/Group');
+
+const {kafka} = require('../../../kafka-backend/kafka');
+const modules = require('./modules');
+const paginateResults = require('../../utils/paginateResults');
 
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
@@ -22,7 +27,9 @@ const validateLoginInput = require('../../validation/login');
 router.get('/handle/:handle', ()=>{
 
 });
-
+router.get('/test', passport.authenticate('jwt', { session: false }), (req,res) => {
+    res.json(req.user);
+})
 // @route   POST api/createnewgroup
 // @desc    Create a New Group
 // @access  Private
@@ -81,50 +88,130 @@ Group.findOne({groupName: req.body.groupName})
 
 
 
-// @route   POST api/profile
-// @desc    Create users's profile
+// @route   GET api/getMyGroups
+// @desc    Get User's joined groups
 // @access  Private
-router.post('/', passport.authenticate('jwt', { session: false }), (req,res)=>{
-    console.log("Backend -- In updateProfile- POST- API");
-    console.log("Req.id: "+req.user.id);
-    console.log("Req.email: "+req.user.email);
-    const profileFields = {};
-    profileFields.user = req.user.id;
-    if(req.body.handle) profileFields.handle = req.body.handle;
-    if(req.body.username) profileFields.username = req.body.username;
-    if(req.body.email) profileFields.email = req.body.email;
-    if(req.body.avatar) profileFields.avatar = req.body.avatar;
-    if(req.body.phone) profileFields.phone = req.body.phone;
-    if(req.body.defaultCurrency) profileFields.defaultCurrency = req.body.defaultCurrency;
-    if(req.body.timezone) profileFields.timezone = req.body.timezone;
-    if(req.body.language) profileFields.language = req.body.language;
-
-    Profile.findOne({user: req.user.id })
-    .then(profile =>{
-        if(profile){
-            //Update if profile already exists
-            console.log("Profile alreday exists..So updating!");
-            Profile.findOneAndUpdate(
-                { user:req.user.id }, 
-                { $set: profileFields },
-                { new: true }
-            )
-            .then(profile => res.json(profile) );
+router.get('/getMyGroups', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In getMyGroups- GET- API");
+    Group.find({"members":{$elemMatch:{member: req.user.id, isProcessed:"Y", isAccepted:"Y"}}},{adminId: 1, groupName:1, 'members.$':1})
+    .then(groups=>{
+        if(groups){
+            res.json(groups)
         }
-        //Create if profile doesnt exists
-        else{
-            //check if handle exists
-            Profile.findOne({handle: profileFields.handle})
-            .then(profile => {
-                if(profile){
-                    errors.handle = 'That handle alreday exists';
-                    res.status(400).json(errors);
-                }
-                //Save Profile
-                console.log("Creating a new profile!");
-                new Profile(profileFields).save().then(profile => res.json(profile) );
-            })
+    });
+});
+
+// @route   GET api/getGroupsInvites
+// @desc    Get User's  group invites
+// @access  Private
+router.get('/getGroupInvites', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In getGroupInvites- GET- API");
+    Group.find({"members":{$elemMatch:{member: req.user.id, isProcessed:"N", isAccepted:"N"}}},{adminId: 1, groupName:1, 'members.$':1})
+    .then(groups=>{
+        if(groups){
+            res.status(200).json(groups)
+        }
+    });
+});
+
+// @route   POST api/acceptInvite
+// @desc    Accept Group Invites
+// @access  Private
+router.post('/acceptInvite', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In Accept Invite- POST- API");
+    Group.findOneAndUpdate({groupName: req.body.groupName, 'members.member': req.user.id}, {$set: {"members.$.isProcessed" : "Y", "members.$.isAccepted" : "Y"}}).then(group =>{
+        console.log(group)
+        if(group){
+            console.log("Invitation accepted");
+            res.json(group);
         }
     })
+});
+
+// @route   POST api/rejectInvite
+// @desc    Reject Group Invites
+// @access  Private
+router.post('/rejectInvite', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In Reject Invite- POST- API");
+    Group.findOneAndUpdate({groupName: req.body.groupName, 'members.member': req.user.id}, {$set: {"members.$.isProcessed" : "Y", "members.$.isAccepted" : "N"}}).then(group =>{
+        console.log(group)
+        if(group){
+            console.log("Invitation rejected");
+            res.json("Invitation rejected");
+        }
+    })
+});
+
+
+
+// @route   GET api/getRecentActivity
+// @desc    Get All Recent Activities across all groups in which req.user.id is a part of
+// @access  Private
+router.get('/getRecentActivity', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In getRecentActivity - GET- API");
+    Group.find({"members":{$elemMatch:{member: req.user.id, isProcessed:"Y", isAccepted:"Y"}}}, {adminId: 1, groupName:1, 'members.$':1})
+    .then(groups =>{
+        console.log("groups: "+groups);
+        var groupNames=[];
+        groups.forEach(group=>{
+            groupNames.push(group.groupName)
+        });
+        BillTransactions.find({"groupName":{$in:groupNames}}).sort({
+            updated_at: -1
+        })
+        .then(billtransactions=>{
+            if(billtransactions){
+                res.json(billtransactions);
+            }
+        })
+    })
+});
+
+
+// @route   GET api/getGroupInfo
+// @desc    Get A group info
+// @access  Private
+router.post('/search', passport.authenticate('jwt', { session: false }), (req,res)=>{
+    console.log("Backend -- In search group - GET- API");
+    // const findQuery = {
+    //     groupName: {
+    //           $regex: query,
+    //           $options: 'i',
+    //         },
+    //       };     
+    // const query = req.query.query;
+    console.log("grpname: "+req.body.groupName);
+    console.log("userid: "+req.user.id);
+    
+    // Group.find({"members":{$elemMatch:{member: req.user.id, isProcessed:"Y", isAccepted:"Y"}}},{groupName:req.body.groupName},{adminId: 1, groupName:1, groupAvatar:1})
+    Group.find({groupName: req.body.groupName}, {"members":{$elemMatch:{member: req.user.id, isProcessed:"Y", isAccepted:"Y"}}})
+    .then(groups=>{
+        if(groups){
+            res.status(200).json(groups)
+        }
     });
+});
+
+// using kafka for accept/reject group invites
+// let callAndWait = () => {
+//     console.log('Kafka client has not connected yet, message will be lost');
+// };
+
+// (async () => {
+//     if (process.env.MOCK_KAFKA === 'false') {
+//         const k = await kafka();
+//         callAndWait = k.callAndWait;
+//     } else {
+//         callAndWait = async (fn, ...params) => modules[fn](...params);
+//         console.log('Connected to dev kafka');
+//     }
+// })();
+
+router.post('/acceptInviteKafka', passport.authenticate('jwt', { session: false }), async(req, res) => {
+    console.log("In group.js - /acceptInviteKafka")
+    const acceptRes = await callAndWait('acceptInviteKafka', req.body.groupName, req.user.id);
+    res.json({acceptRes});
+})
+
 module.exports = router;
+

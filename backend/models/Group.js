@@ -6,7 +6,7 @@ const GroupSchema = new Schema({
     members:[{
         member:{
             type: Schema.Types.ObjectId,
-            ref: 'user'
+            ref: 'users'
         },
         isProcessed: String,
         isAccepted: String
