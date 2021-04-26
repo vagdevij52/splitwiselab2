@@ -18,6 +18,8 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const Styles = styled.div`
     .navbar{
@@ -78,6 +80,7 @@ const DashboardPage = (props) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [openAccepted, setOpenAccepted] = React.useState(false);
 
     const storeusername = useSelector((state) => state.loggedReducer.username);
     const dispatch = useDispatch();
@@ -174,10 +177,20 @@ const DashboardPage = (props) => {
               }
             axios.post("http://localhost:4000/api/billtransactions/settleup",body,headers).then((response)=>{
                 console.log("Settled up with "+selectModalVal+"Response: "+response.data);
+                setOpenAccepted(true);
                 window.location.reload(true);
             });
         }
 
+        const handleAcceptedClose = (event, reason) => {
+            if (reason === 'clickaway') {
+              return;
+            }    
+            setOpenAccepted(false);
+          };
+        function Alert(props) {
+            return <MuiAlert elevation={10} variant="filled" {...props} />;
+        }
         const handleSelect=(e)=>{
             console.log("setSelectModalVal::::: "+e);
             setSelectModalVal(e);
@@ -190,6 +203,13 @@ const DashboardPage = (props) => {
     <body>
         <>
         <NavbarAfterLogin/>
+
+        <Snackbar open={openAccepted} autoHideDuration={6000} onClose={handleAcceptedClose}>
+                    <Alert style={{fontSize:"20px"}} onClose={handleAcceptedClose} severity="success">
+                        You have added an expense
+                    </Alert>
+            </Snackbar>
+
         <h1 style={{color:"#5bc5a7",marginLeft:"5px"}}>Hey {storeusername}</h1>
         <br/><br/>
         <Row>

@@ -191,6 +191,16 @@ router.post('/addCommentByKafka', passport.authenticate('jwt', {session: false})
 })
 
 
+router.post('/addBillByKafka', passport.authenticate('jwt', { session: false }), async(req,res) => {
+   // var t0 = performance.now();
+    console.log("Are you coming here?????")
+    const billtransactions = await callAndWait('addBill', req.user,req.body.groupName,req.body.expenseDesc,req.body.expenseAmount);
+   // var t1 = performance.now();
+   // console.log("Call to addCommentByKafka() API took " + (t1 - t0) + " milliseconds.")     
+    res.json(billtransactions);
+});
+
+
 
 
 // @route   POST api/leaveGroup
@@ -216,12 +226,23 @@ router.post('/leaveGroup', passport.authenticate('jwt', { session: false }), (re
     //         //res.json(expensecomment);
     //     }
     // })
-    // Group.find({groupName: req.body.groupName}).then((grp)=>{
-    //     let id = mongoose.Types.ObjectId(grp[0]._id);
+    //Group.find({groupName: req.body.groupName, 'members.member': req.user.id}).then((grp)=>{
+        //let id = mongoose.Types.ObjectId(grp[0]._id);
         //BillTransactions.find
-        Group.remove({'members.member': req.user.id,groupName: req.body.groupName}).then((user)=>{
-            res.json(user);
-        })
+        //console.log("Grp: "+grp);
+        // BillTransactions.find({groupName: req.body.groupName, 'members.member': req.user.id}).then((usr)=>{
+        //     console.log("usr: "+usr[0]);
+        // })
+
+        BillTransactions.find({groupName: req.body.groupName, 'members.member': req.user.id})
+        .then(bills=>{
+            if(bills){
+                res.json(bills)
+            }
+        });
+        // Group.remove({'members.member': req.user.id,groupName: req.body.groupName}).then((user)=>{
+        //     res.json(user);
+        // })
         //console.log("id: "+id);
         //console.log("Grp: "+grp);
         //res.json(grp);

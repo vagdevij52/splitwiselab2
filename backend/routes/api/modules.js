@@ -75,92 +75,49 @@ module.exports = {
 
     },
 
-    addBill: async(user, groupName, expenseName, expense) => {
-
-        mongoose
-
-            .connect(db)
-
-            .then(() => console.log("MongoDb connected"))
-
-            .catch(err => console.log(err));
-
-        console.log("user "+ JSON.stringify(user), groupName, expenseName, expense);
-
-        var groups = await Group.findOne({groupName: groupName});
-
-        var members  = groups.members;
-
-        console.log("group "+group);  
-
+    addBill: async(user, groupName, expenseDesc, expenseAmount) => {
+        await mongoose.connect(db);
+        console.log("user "+ JSON.stringify(user), groupName, expenseDesc, expenseAmount);
+        var group = await Group.findOne({groupName: groupName});
+        var members  = group.members;
+        console.log("group "+group); 
+        console.log("members "+JSON.stringify(members));  
         const billTransactionsFields = {};
-
         billTransactionsFields.authorId = user._id;
-
         billTransactionsFields.groupName = groupName;
-
-        billTransactionsFields.expenseName = expenseName;
-
-        billTransactionsFields.expense = expense;
-
+        billTransactionsFields.expenseDesc = expenseDesc;
+        billTransactionsFields.expenseAmount = expenseAmount;
         billTransactionsFields.members = [];
-
         var credit = expense/group.members.length;
-
         console.log("Credit value : "+credit);
-
-        
-
+        console.log("userid "+ user._id);
         for(var i=0;i<members.length;i++){
-
-            var user = {};
-
-            if(String(user._id)=== String(members[i].member)){
-
-
+            var userVal = {};
+            console.log("member "+members[i].member);
+            console.log("user._id === members[i].member "+ user._id === members[i].member);
+            if(String(user._id) === String(members[i].member)){
 
             }else{
-
-                console.log(members[i].member);
-
-                user.credit = credit;
-
-                user.member = members[i].member;
-
-                billTransactionsFields.members.push(user);
-
+                console.log(user._id);
+                userVal.credit = credit;
+                userVal.member = members[i].member;
+                billTransactionsFields.members.push(userVal);
             }
-
         }
-
         // await group.members.forEach(memberval => {
-
         //     var user = {};
-
         //     if(String(req.user.id)=== String(memberval.member)){
 
-
-
         //     }else{
-
         //         console.log(memberval.member)
-
         //         user.credit = credit;
-
         //         user.member = memberval.member;
-
         //         billTransactionsFields.members.push(user);
-
         //     }
-
         // }); 
-
         console.log('billTransactionsFields :'+JSON.stringify(billTransactionsFields));
-
         const billTxns =  await new BillTransactions(billTransactionsFields).save();
-
         return billTxns;   
-
     }
 
 }
