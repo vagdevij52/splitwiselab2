@@ -29,7 +29,7 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     axios
-    .post("http://localhost:4000/api/users/login", {
+    .post("http://54.227.195.128:4000/api/users/login", {
       email,
       password,
     })

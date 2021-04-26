@@ -11,7 +11,7 @@ export const setProfile = (username,email,avatar,phone,defaultCurrency,timezone,
 // Get Current Profile
 export const getCurrentProfile = () => dispatch => {
     dispatch(setProfileLoading());
-    axios.get('http://localhost:4000/api/profile')
+    axios.get("http://54.227.195.128:4000/api/profile")
     .then(res=>
         dispatch({
             type: GET_PROFILE,

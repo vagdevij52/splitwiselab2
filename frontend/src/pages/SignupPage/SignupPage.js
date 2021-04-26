@@ -22,7 +22,7 @@ const SignupPage = (props) => {
   const handleSignUp = async(e) =>{
     e.preventDefault();
     try{
-    const response = await axios.post("http://localhost:4000/api/users/signup", {
+    const response = await axios.post("http://54.227.195.128:4000/api/users/signup", {
       username,
       email,
       password,

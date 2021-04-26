@@ -36,7 +36,7 @@ export function getRegUserData(userId,token) {
     }
     console.log("Token in getUserData:::createAsyncThunk "+token);
       return async dispatch => {
-      const resp = await fetch('http://localhost:4000/api/profile',requestOptions);
+      const resp = await fetch('http://54.227.195.128:4000/api/profile',requestOptions);
       console.log("Resp of current API: "+JSON.stringify(resp));
 			const userData =  resp.json();
       var payload = userData;

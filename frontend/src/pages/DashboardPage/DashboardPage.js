@@ -103,7 +103,7 @@ const DashboardPage = (props) => {
                 method: 'GET',
                headers: { 'Content-Type': 'application/json' ,'Authorization': token},
               }
-            axios.get("http://localhost:4000/api/billtransactions/youOwe",requestOptions)
+            axios.get("http://54.227.195.128:4000/api/billtransactions/youOwe",requestOptions)
             .then((response) =>{
                 var x = Math.floor((response.data[0].sum) * 100) / 100;
                 x.toFixed(2);
@@ -116,7 +116,7 @@ const DashboardPage = (props) => {
             });
 
 
-            axios.get("http://localhost:4000/api/billtransactions/youAreOwed",requestOptions)
+            axios.get("http://54.227.195.128:4000/api/billtransactions/youAreOwed",requestOptions)
             .then((response) =>{
                 var x = Math.floor((response.data[0].sum) * 100) / 100;
                 x.toFixed(2);
@@ -146,7 +146,7 @@ const DashboardPage = (props) => {
             // });
 
             
-            axios.get("http://localhost:4000/api/billtransactions/owesummary",requestOptions)
+            axios.get("http://54.227.195.128:4000/api/billtransactions/owesummary",requestOptions)
             .then((response)=>{
                 console.log("You owe summary: "+JSON.stringify(response.data));
                  var owedSummList = JSON.stringify(response.data);
@@ -175,7 +175,7 @@ const DashboardPage = (props) => {
               const body = {
                   'authorId': authorId
               }
-            axios.post("http://localhost:4000/api/billtransactions/settleup",body,headers).then((response)=>{
+            axios.post("http://54.227.195.128:4000/api/billtransactions/settleup",body,headers).then((response)=>{
                 console.log("Settled up with "+selectModalVal+"Response: "+response.data);
                 setOpenAccepted(true);
                 window.location.reload(true);

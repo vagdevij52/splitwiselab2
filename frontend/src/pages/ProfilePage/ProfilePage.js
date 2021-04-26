@@ -97,7 +97,7 @@ const ProfilePage = (props) =>{
             method: 'GET',
            headers: { 'Content-Type': 'application/json' ,'Authorization': token},
           }
-        axios.get("http://localhost:4000/api/profile",requestOptions)
+        axios.get("http://54.227.195.128:4000/api/profile",requestOptions)
         .then(response=>{
             if(response.status === 200){
               console.log("Profile page::Get user profile");
@@ -129,7 +129,6 @@ const ProfilePage = (props) =>{
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const API_URL = "http://localhost:4000/";
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -214,7 +213,7 @@ const ProfilePage = (props) =>{
            'handle': handle,'username': username,'email':email,'avatar':avatar,'phone':phone,'defaultCurrency':defaultCurrency,'timezone':timezone,'language':language
           }
           console.log("Requestoptions: "+JSON.stringify(body));
-        axios.post("http://localhost:4000/api/profile",body,{
+        axios.post("http://54.227.195.128:4000/api/profile",body,{
             headers: headers
         })
         .then(response=>{

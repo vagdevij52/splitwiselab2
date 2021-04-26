@@ -39,7 +39,7 @@ const RecentActivityPage = () =>{
             method: 'GET',
            headers: { 'Content-Type': 'application/json' ,'Authorization': token},
           }
-        axios.get("http://localhost:4000/api/group/getRecentActivity",requestOptions)
+        axios.get("http://54.227.195.128:4000/api/group/getRecentActivity",requestOptions)
         .then((response) =>{
             console.log("Recent Activity: "+JSON.stringify(response.data));
              if(response.status===200){

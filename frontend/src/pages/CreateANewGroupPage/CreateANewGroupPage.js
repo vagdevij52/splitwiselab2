@@ -13,6 +13,7 @@ import {Link} from 'react-router-dom';
 import {  useSelector,useDispatch } from 'react-redux';
 import {useHistory} from "react-router-dom";
 import {Image} from "cloudinary-react";
+import API_URL from '../../config/backendurl';
 
 
 const CreateANewGroupPage = () => {
@@ -64,7 +65,7 @@ const CreateANewGroupPage = () => {
             'Content-Type': 'application/x-www-form-urlencoded' ,
             'Authorization': token
         }
-        axios.post("http://localhost:4000/api/group/createNewGroup",params,{
+        axios.post("http://54.227.195.128:4000/api/group/createNewGroup",params,{
             headers: headers
         })
         .then(response=>{

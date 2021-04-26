@@ -40,7 +40,7 @@ const LoadMyGroups = () =>{
             method: 'GET',
            headers: { 'Content-Type': 'application/json' ,'Authorization': token},
           }
-        axios.get("http://localhost:4000/api/group/getMyGroups",requestOptions)
+        axios.get("http://54.227.195.128:4000/api/group/getMyGroups",requestOptions)
         .then((response) =>{
             console.log("My Groups: "+JSON.stringify(response.data));
             if(response.status===200){

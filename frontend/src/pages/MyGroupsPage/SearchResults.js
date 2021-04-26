@@ -30,7 +30,7 @@ const SearchResults = () => {
             'groupName':groupName
            }
        // await dispatch(setSearchResults(query));
-       axios.post('http://localhost:4000/api/group/search/',body,{
+       axios.post('http://54.227.195.128:4000/api/group/search/',body,{
         headers: headers
         })
        .then((response) =>{

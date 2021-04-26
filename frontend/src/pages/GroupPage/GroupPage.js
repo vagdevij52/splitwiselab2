@@ -10,7 +10,6 @@ import LeftSideBar from '../LeftSideBar/LeftSideBar';
 import { Form,Modal,Container,Row, Col} from 'react-bootstrap';
 import NavbarAfterLogin from '../Navbar/NavbarAfterLogin';
 import {  useSelector,useDispatch } from 'react-redux';
-import GroupCenterColumn from './GroupCenterColumn';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -30,8 +29,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
-import ExpenseComment from './ExpenseComment';
-import CustomizedListItem from './CustomizedListItem';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -117,7 +114,7 @@ const useStyles = makeStyles({
           'expenseDesc': billDesc,
       }
       console.log("body: "+JSON.stringify(body)+"headers: "+JSON.stringify(headers));
-      axios.post("http://localhost:4000/api/billtransactions/getExpenseComment",body,headers)
+      axios.post("http://54.227.195.128:4000/api/billtransactions/getExpenseComment",body,headers)
               .then((response) =>{
                   console.log("got expense comment as: "+JSON.stringify(response.data[0].expenseComment));
                   if(response.status===200){
@@ -157,7 +154,7 @@ const useStyles = makeStyles({
           method: 'GET',
          headers: { 'Content-Type': 'application/json' ,'Authorization': token},
         }
-      axios.get("http://localhost:4000/api/billtransactions/youOwe",requestOptions)
+      axios.get("http://54.227.195.128:4000/api/billtransactions/youOwe",requestOptions)
       .then((response) =>{
          
           if(response.status===200){
@@ -166,7 +163,7 @@ const useStyles = makeStyles({
             console.log("You Owe: "+x);
             if(x===0){
               console.log("You can leave the group");
-              axios.post("http://localhost:4000/api/group/leaveGroup",requestOptions)
+              axios.post("http://54.227.195.128:4000/api/group/leaveGroup",requestOptions)
               .then((response) =>{});
               history.push("/dashboard");
             }
@@ -189,7 +186,7 @@ const useStyles = makeStyles({
         'text':postComment,
     }
     console.log("body: "+JSON.stringify(body)+"headers: "+JSON.stringify(headers));
-    axios.post("http://localhost:4000/api/billtransactions/addCommentByKafka",body,headers)
+    axios.post("http://54.227.195.128:4000/api/billtransactions/addCommentByKafka",body,headers)
             .then((response) =>{
                 console.log("Added expense comment: "+JSON.stringify(response.data.expenseComment));
                 if(response.status===200){
@@ -228,7 +225,7 @@ const useStyles = makeStyles({
             }
             console.log("will call /api/group/test with token: "+token);
             console.log("grp name: "+groupName);
-            axios.post("http://localhost:4000/api/billtransactions/getGroupBills",body,headers)
+            axios.post("http://54.227.195.128:4000/api/billtransactions/getGroupBills",body,headers)
             .then((response) =>{
                 console.log("Groups Bills: "+JSON.stringify(response.data));
                 if(response.status===200){
@@ -276,7 +273,7 @@ const useStyles = makeStyles({
         const body = {
             'groupName': groupName,'expenseAmount': expenseAmount,'expenseDesc':expenseDesc
            }
-        axios.post('http://localhost:4000/api/billtransactions/addbilldetails',body,{
+        axios.post('http://54.227.195.128:4000/api/billtransactions/addbilldetails',body,{
             headers: headers
         }).then((response)=>{
            if(response.status===200){

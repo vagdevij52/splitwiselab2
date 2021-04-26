@@ -2,6 +2,7 @@ import axios from 'axios';
 //import {API_URL} from '../../constants/Constants';
 import { storeRegUserData, userSelector } from '../../slices/registereduserSlice';
 import { useDispatch, useSelector } from 'react-redux'
+import API_URL from '../../config/backendurl';
 
 
 const RegistrationService = (username,email,password) => {
@@ -10,7 +11,7 @@ const RegistrationService = (username,email,password) => {
     console.log("Using useselector");
     //const [ name, useremail ] = useSelector(userSelector);
     console.log(" going to make axios call");
-    return axios.post("http://localhost:4000/api/users/signup", {
+    return axios.post("http://54.227.195.128:4000/api/users/signup", {
         username,
         email,
         password,
