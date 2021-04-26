@@ -19,7 +19,7 @@ const BillTransactionsSchema = new Schema({
     },
     expenseDesc:{
         type: String,
-         required: true,
+         //required: true,
          unique: true
     },
     expenseComment:[{

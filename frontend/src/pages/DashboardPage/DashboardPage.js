@@ -16,6 +16,8 @@ import {  useSelector,useDispatch } from 'react-redux';
 import logged from '../../actions/loginActions';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 
 const Styles = styled.div`
     .navbar{
@@ -61,6 +63,7 @@ const Styles = styled.div`
     
 `;
 
+
 const DashboardPage = (props) => {
     var userLocalStorage = JSON.parse(localStorage.getItem("user"));
     const token = userLocalStorage.token;
@@ -84,6 +87,10 @@ const DashboardPage = (props) => {
         var emailsListOwed = [];
         var creditListOwed = [];
 
+        const[youOweSummParedObj, setYouOweSummParedObj] = useState([]);
+        const[youAreOwedSummParedObj, setYouAreOwedSummParedObj] = useState([]);
+
+        const[oweSummParedObj, setoweSummParedObj] = useState([]);
         useEffect(() =>{
         const onLoadShowDashboard = () => {
             var user = JSON.parse(localStorage.getItem("user"));
@@ -119,73 +126,56 @@ const DashboardPage = (props) => {
                 console.log(err);
             });
 
-            // // you owe summary
-            // axios.post(API_URL + 'getyouowesummary', {
-            //     email,
-            // }).then((response)=>{
-            //     console.log("You owe summary: "+response.data);
-            //     var strRes = JSON.stringify(response.data);
-            //     console.log(strRes);
-            //     var data = JSON.parse(strRes);
-            //     for(var i=0;i<data.length;i++){
-            //         console.log("Data frm back:::: "+JSON.stringify(data[i]["authorEmail"]) +" "+JSON.stringify(data[i]["credit"]));
-            //         var creditdata = {};
-            //         creditdata.email = data[i]["authorEmail"];
-            //         creditdata.credit = data[i]["credit"];
-            //         emailsList.push(data[i]["authorEmail"]);
-            //         creditList.push(creditdata);
-            //     }
-            //     console.log(creditList);
-            //     setYouOweEmailSummary(emailsList);
-            //     setYouOweCreditSummary(creditList);
-
-            //     console.log("youOweEmailSummary length:"+youOweEmailSummary.length);
-            //     console.log("youOweEmailSummary length:"+youOweCreditSummary.length);
+            // you owe summary
+            // axios.get("http://localhost:4000/api/billtransactions/youOweSummary",requestOptions)
+            // .then((response)=>{
+            //     console.log("You owe summary: "+JSON.stringify(response.data));
+            //     var youOweSummList = JSON.stringify(response.data);
+            //     setYouOweSummParedObj(JSON.parse(youOweSummList));
             // });
 
-            // // you are owed summary
-            // axios.post(API_URL + 'getyouareowedsummary', {
-            //     email,
-            // }).then((response)=>{
-            //     console.log("You are owed summary: "+response.data);
-            //     var strRes = JSON.stringify(response.data);
-            //     console.log(strRes);
-            //     var data = JSON.parse(strRes);
-            //     for(var i=0;i<data.length;i++){
-            //         console.log("Data frm back:::: "+JSON.stringify(data[i]["userEmail"]) +" "+JSON.stringify(data[i]["credit"]));
-            //         var creditdata = {};
-            //         creditdata.email = data[i]["userEmail"];
-            //         creditdata.credit = data[i]["credit"];
-            //         emailsListOwed.push(data[i]["userEmail"]);
-            //         creditListOwed.push(creditdata);
-            //     }
-            //     console.log(creditListOwed);
-            //     setYouAreOwedEmailSummary(emailsListOwed);
-            //     setYouAreOwedCreditSummary(creditListOwed);
-
-            //     console.log("youOweEmailSummary length:"+youAreOwedEmailSummary.length);
-            //     console.log("youOweEmailSummary length:"+youAreOwedCreditSummary.length);
+            // // // you are owed summary
+            // axios.get("http://localhost:4000/api/billtransactions/youAreOwedSummary",requestOptions)
+            // .then((response)=>{
+            //     console.log("You owe summary: "+JSON.stringify(response.data));
+            //     var youAreOwedSummList = JSON.stringify(response.data);
+            //     setYouAreOwedSummParedObj(JSON.parse(youAreOwedSummList));
             // });
 
-            // console.log(youAreOwed-youOwe);
-            // setTotalBalance(youAreOwed-youOwe);
-             
+            
+            axios.get("http://localhost:4000/api/billtransactions/owesummary",requestOptions)
+            .then((response)=>{
+                console.log("You owe summary: "+JSON.stringify(response.data));
+                 var owedSummList = JSON.stringify(response.data);
+                 setoweSummParedObj(JSON.parse(owedSummList));
+            });
+            
         }
         onLoadShowDashboard();
         },[]);
 
+        const displayPositiveSumm = () =>{
+            console.log("In displayPositiveSumm()");
+              
+        }
 
         const handleSettleUp = (e) =>{
-            // console.log(e.target.value+" clicked");
-            // console.log("selectModalVal: "+ selectModalVal);
-            // var useremail = selectModalVal;
-            // axios.post(API_URL + 'settleup', {
-            //     selectModalVal,
-            //     email,
-            // }).then((response)=>{
-            //     console.log("You are owed: "+response.data);
-            //     setYouAreOwed(response.data);
-            // });
+            console.log(e.target.value+" clicked");
+            console.log("selectModalVal: "+ selectModalVal);
+            var authorId = selectModalVal;
+            const headers = {
+                headers: {
+                  'Content-Type': 'application/json' ,
+                  'Authorization': token
+                }
+            }
+              const body = {
+                  'authorId': authorId
+              }
+            axios.post("http://localhost:4000/api/billtransactions/settleup",body,headers).then((response)=>{
+                console.log("Settled up with "+selectModalVal+"Response: "+response.data);
+                window.location.reload(true);
+            });
         }
 
         const handleSelect=(e)=>{
@@ -193,7 +183,9 @@ const DashboardPage = (props) => {
             setSelectModalVal(e);
           }
 
+          
         var tb = youAreOwed-youOwe;
+
     return(
     <body>
         <>
@@ -245,12 +237,12 @@ const DashboardPage = (props) => {
                 Select person
                 </Dropdown.Toggle> */}
                 <DropdownButton title = "Select person" onSelect = {handleSelect}>
-                {youOweCreditSummary.map(credit => 
+                {oweSummParedObj.map(credit => 
                 <Dropdown.Item style={{color:"#353839",fontSize:"20px"}}
-                eventKey={credit.email}
+                eventKey={credit.name}
                 //onClick={e=> setSelectModalVal(e.target.value)}
                 >
-                {credit.email}
+                {credit.name}
                 </Dropdown.Item>
                 )}
                 {/* <Dropdown.Item style={{color:"#353839",fontSize:"20px"}}>
@@ -288,9 +280,35 @@ const DashboardPage = (props) => {
             </div>
             <div style={{height:"500px"}} className="dashboardBlock">
                 <Row>
-                <Col><p style={{marginLeft:"25px",color:"#414a4c",fontSize:"17px"}}>YOU OWE</p></Col>
+                <Col><p style={{marginLeft:"25px",color:"#414a4c",fontSize:"17px"}}>YOU OWE</p>
+                {oweSummParedObj
+                .map(owesum => {
+                if(owesum.summ<0)
+                return(
+                <Grid item>
+                <Paper style={{ marginLeft:"10px" , background:"#eee",fontSize:17}}> 
+                <div>{owesum.name} : ${-(owesum.summ)}
+                </div>
+                </Paper>
+                </Grid>
+                )
+                })}
+                </Col>
                 <p className="dashboardVerLine"></p>
-                <Col><p style={{marginLeft:"130px",color:"#414a4c",fontSize:"17px"}}>YOU ARE OWED</p></Col>
+                <Col><p style={{marginLeft:"130px",color:"#414a4c",fontSize:"17px"}}>YOU ARE OWED</p>
+                {oweSummParedObj
+                .map(owesum => {
+                if(owesum.summ>0)
+                return(
+                <Grid item>
+                <Paper style={{ marginLeft:"10px" , background:"#eee",fontSize:17}}> 
+                <div>{owesum.name} : ${(owesum.summ)}
+                </div>
+                </Paper>
+                </Grid>
+                )
+                })}
+                </Col>
                 </Row>
             </div>
         </Col>
